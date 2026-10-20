@@ -13,6 +13,8 @@
       <nav>
         <a href="#" id="navSearch" class="active">Search trains</a>
         <a href="#" id="navTickets">My tickets</a>
+        <a href="#" id="navProfile">Profile</a>
+        <a href="#" id="navHistory">History</a>
       </nav>
     </div>
   </header>
@@ -82,6 +84,115 @@
           </thead>
           <tbody id="bookingBody"></tbody>
         </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 4: Personal Details / Profile -->
+  <section id="pageProfile" hidden>
+    <div class="wrap">
+      <h1 class="page-title">Personal Details</h1>
+      <p class="sub">Manage your profile information. Create, view, update or delete your details.</p>
+
+      <!-- Lookup / Create toggle -->
+      <div class="profile-actions-bar">
+        <div class="card lookup">
+          <label>Username <input id="profileUsername" placeholder="e.g. johndoe"></label>
+          <button id="loadProfileBtn">Load Profile</button>
+          <button id="newProfileBtn" class="ghost">New Profile</button>
+        </div>
+      </div>
+
+      <!-- Profile Form -->
+      <div id="profileFormWrap" class="card profile-form" hidden>
+        <h2 id="profileFormTitle" class="section-title" style="margin-top:0">Create Profile</h2>
+        <div class="form-grid-2">
+          <label>Username <input id="pfUsername" autocomplete="off"></label>
+          <label>Full Name <input id="pfFullName" autocomplete="off"></label>
+          <label>Email <input id="pfEmail" type="email" autocomplete="off"></label>
+          <label>Phone <input id="pfPhone" type="tel" autocomplete="off"></label>
+          <label>Date of Birth <input id="pfDob" type="date"></label>
+          <label>ID Proof Type
+            <select id="pfIdType">
+              <option value="AADHAR">Aadhar</option>
+              <option value="PAN">PAN</option>
+              <option value="PASSPORT">Passport</option>
+              <option value="VOTER_ID">Voter ID</option>
+            </select>
+          </label>
+          <label>ID Proof Number <input id="pfIdNo" autocomplete="off"></label>
+          <label>Address <input id="pfAddress" autocomplete="off"></label>
+          <label>City <input id="pfCity" autocomplete="off"></label>
+          <label>State <input id="pfState" autocomplete="off"></label>
+          <label>Pincode <input id="pfPincode" autocomplete="off"></label>
+        </div>
+        <div class="actions" style="justify-content:flex-start; margin-top:20px; margin-bottom:0;">
+          <button id="saveProfileBtn">Save Profile</button>
+          <button id="updateProfileBtn" class="ghost" hidden>Update Profile</button>
+          <button id="deleteProfileBtn" class="danger" hidden>Delete Profile</button>
+        </div>
+      </div>
+
+      <!-- Profile Display Card -->
+      <div id="profileDisplay" class="profile-card-display" hidden></div>
+
+      <!-- All Profiles List -->
+      <h2 class="section-title">All Registered Users</h2>
+      <div class="card table-wrap">
+        <table>
+          <thead>
+            <tr><th>USERNAME</th><th>FULL NAME</th><th>EMAIL</th><th>PHONE</th><th>CITY</th><th>ID PROOF</th><th>CREATED</th></tr>
+          </thead>
+          <tbody id="profilesBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 5: History (Transactions + Travelling) -->
+  <section id="pageHistory" hidden>
+    <div class="wrap">
+      <h1 class="page-title">History & Insights</h1>
+      <p class="sub">View transaction history, booking timeline, and currently travelling passengers.</p>
+
+      <!-- History sub-tabs -->
+      <div class="history-tabs" id="historyTabs">
+        <button class="chip active" data-h="transactions">Transaction History</button>
+        <button class="chip" data-h="travelling">Travelling Passengers</button>
+      </div>
+
+      <!-- Transactions Section -->
+      <div id="histTransactions">
+        <div id="txStats" class="stats"></div>
+        <div class="table-head">
+          <h2 class="section-title">All Transactions</h2>
+          <div class="filters" id="txFilters">
+            <button class="chip active" data-tf="ALL">All</button>
+            <button class="chip" data-tf="BOOKING">Bookings</button>
+            <button class="chip" data-tf="CANCELLATION_REFUND">Refunds</button>
+          </div>
+        </div>
+        <div class="card table-wrap">
+          <table>
+            <thead>
+              <tr><th>TXN ID</th><th>PNR</th><th>PASSENGER</th><th>TRAIN</th><th>ROUTE</th><th>AMOUNT</th><th>TYPE</th><th>MODE</th><th>STATUS</th><th>DATE</th></tr>
+            </thead>
+            <tbody id="txBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Travelling Passengers Section -->
+      <div id="histTravelling" hidden>
+        <div id="travStats" class="stats"></div>
+        <div class="card table-wrap">
+          <table>
+            <thead>
+              <tr><th>PNR</th><th>PASSENGER</th><th>AGE</th><th>GENDER</th><th>TRAIN</th><th>ROUTE</th><th>SEAT</th><th>FARE</th></tr>
+            </thead>
+            <tbody id="travBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </section>

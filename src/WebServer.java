@@ -8,12 +8,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class WebServer {
     private static final BookingService service = new BookingService();
+    private static final UserProfileDao profileDao = new UserProfileDao();
+    private static final TransactionDao transactionDao = new TransactionDao();
 
     // One small piece of work the server can do, e.g. "list trains"
     private interface Action {
@@ -66,6 +69,117 @@ public class WebServer {
             Ticket t = service.getTicket(p.getOrDefault("pnr", ""));
             String fileName = TicketExporter.save(t);
             return "{\"message\":" + quote("Ticket saved to file " + fileName) + "}";
+        }));
+
+        // ---------- NEW: All bookings (needed by the frontend's "My Tickets" page) ----------
+        server.createContext("/api/bookings", ex -> handle(ex, p -> {
+            List<Ticket> list = service.allTickets();
+            StringBuilder sb = new StringBuilder("[");
+            for (int i = 0; i < list.size(); i++) {
+                if (i > 0) sb.append(",");
+                sb.append(ticketJson(list.get(i)));
+            }
+            return sb.append("]").toString();
+        }));
+
+        // ---------- NEW: User Profile CRUD ----------
+
+        // GET profile by username
+        server.createContext("/api/profile/get", ex -> handle(ex, p -> {
+            String username = p.getOrDefault("username", "").trim();
+            if (username.isBlank()) throw new IllegalArgumentException("Username is required.");
+            try (Connection con = Database.getConnection()) {
+                Map<String, String> profile = profileDao.findByUsername(con, username);
+                if (profile == null) throw new IllegalArgumentException("No profile found for: " + username);
+                return mapToJson(profile);
+            }
+        }));
+
+        // GET all profiles
+        server.createContext("/api/profile/all", ex -> handle(ex, p -> {
+            try (Connection con = Database.getConnection()) {
+                List<Map<String, String>> profiles = profileDao.findAll(con);
+                return listMapToJson(profiles);
+            }
+        }));
+
+        // POST create profile
+        server.createContext("/api/profile/create", ex -> handle(ex, p -> {
+            String username = p.getOrDefault("username", "").trim();
+            if (username.isBlank()) throw new IllegalArgumentException("Username is required.");
+            try (Connection con = Database.getConnection()) {
+                int id = profileDao.insertProfile(con,
+                        username,
+                        p.getOrDefault("fullName", ""),
+                        p.getOrDefault("email", ""),
+                        p.getOrDefault("phone", ""),
+                        p.getOrDefault("dateOfBirth", ""),
+                        p.getOrDefault("address", ""),
+                        p.getOrDefault("city", ""),
+                        p.getOrDefault("state", ""),
+                        p.getOrDefault("pincode", ""),
+                        p.getOrDefault("idProofType", "AADHAR"),
+                        p.getOrDefault("idProofNo", ""));
+                return "{\"message\":" + quote("Profile created successfully") + ",\"userId\":" + id + "}";
+            }
+        }));
+
+        // POST update profile
+        server.createContext("/api/profile/update", ex -> handle(ex, p -> {
+            String username = p.getOrDefault("username", "").trim();
+            if (username.isBlank()) throw new IllegalArgumentException("Username is required.");
+            try (Connection con = Database.getConnection()) {
+                profileDao.updateProfile(con,
+                        username,
+                        p.getOrDefault("fullName", ""),
+                        p.getOrDefault("email", ""),
+                        p.getOrDefault("phone", ""),
+                        p.getOrDefault("dateOfBirth", ""),
+                        p.getOrDefault("address", ""),
+                        p.getOrDefault("city", ""),
+                        p.getOrDefault("state", ""),
+                        p.getOrDefault("pincode", ""),
+                        p.getOrDefault("idProofType", "AADHAR"),
+                        p.getOrDefault("idProofNo", ""));
+                return "{\"message\":" + quote("Profile updated successfully") + "}";
+            }
+        }));
+
+        // POST delete profile
+        server.createContext("/api/profile/delete", ex -> handle(ex, p -> {
+            String username = p.getOrDefault("username", "").trim();
+            if (username.isBlank()) throw new IllegalArgumentException("Username is required.");
+            try (Connection con = Database.getConnection()) {
+                profileDao.deleteProfile(con, username);
+                return "{\"message\":" + quote("Profile deleted successfully") + "}";
+            }
+        }));
+
+        // ---------- NEW: Transaction History ----------
+
+        // GET all transactions
+        server.createContext("/api/transactions", ex -> handle(ex, p -> {
+            try (Connection con = Database.getConnection()) {
+                List<Map<String, String>> txns = transactionDao.findAll(con);
+                return listMapToJson(txns);
+            }
+        }));
+
+        // GET successful transactions only
+        server.createContext("/api/transactions/successful", ex -> handle(ex, p -> {
+            try (Connection con = Database.getConnection()) {
+                List<Map<String, String>> txns = transactionDao.findSuccessful(con);
+                return listMapToJson(txns);
+            }
+        }));
+
+        // ---------- NEW: Currently Travelling Passengers ----------
+
+        server.createContext("/api/travelling", ex -> handle(ex, p -> {
+            try (Connection con = Database.getConnection()) {
+                List<Map<String, String>> passengers = transactionDao.findTravelling(con);
+                return listMapToJson(passengers);
+            }
         }));
 
         server.start();
@@ -163,6 +277,28 @@ public class WebServer {
              + ",\"fare\":" + t.getFare() + "}";
     }
 
+    // Converts a Map to a JSON object string
+    private static String mapToJson(Map<String, String> map) {
+        StringBuilder sb = new StringBuilder("{");
+        boolean first = true;
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            if (!first) sb.append(",");
+            first = false;
+            sb.append(quote(entry.getKey())).append(":").append(quote(entry.getValue()));
+        }
+        return sb.append("}").toString();
+    }
+
+    // Converts a List of Maps to a JSON array string
+    private static String listMapToJson(List<Map<String, String>> list) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < list.size(); i++) {
+            if (i > 0) sb.append(",");
+            sb.append(mapToJson(list.get(i)));
+        }
+        return sb.append("]").toString();
+    }
+
     // Puts text in quotes and escapes special characters so the JSON stays valid
     private static String quote(String s) {
         StringBuilder sb = new StringBuilder("\"");
@@ -181,3 +317,4 @@ public class WebServer {
         return sb.append('"').toString();
     }
 }
+

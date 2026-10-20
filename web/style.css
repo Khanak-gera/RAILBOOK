@@ -99,9 +99,114 @@ tr.clickable:hover { background: #f8fafc; }
 .toast.error { background: var(--red); }
 footer { text-align: center; color: var(--muted); font-size: 13px; padding: 32px 24px; }
 
+/* ====== NEW STYLES: Profile Page ====== */
+.profile-actions-bar { margin-bottom: 20px; }
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.profile-form { margin-bottom: 24px; }
+
+.profile-card-display {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 32px;
+}
+
+.profile-field {
+  padding: 10px 0;
+  border-bottom: 1px solid #e3e8ef;
+}
+
+.profile-field-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.profile-field-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--line);
+}
+
+.profile-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), #3b6dd8);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.profile-header-info h2 {
+  margin: 0 0 2px;
+  font-size: 22px;
+}
+
+.profile-header-info p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ====== NEW STYLES: History Page ====== */
+.history-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+/* Transaction-specific badges */
+.badge.booking { background: #dbeafe; color: #1e40af; }
+.badge.cancellation_refund { background: #fde9a8; color: #7a3e06; }
+.badge.success { background: #c9edd3; color: #14532d; }
+.badge.failed { background: #fbdada; color: #7f1d1d; }
+.badge.pending { background: #fde9a8; color: #7a3e06; }
+.badge.upi { background: #e0e9fb; color: var(--blue); }
+.badge.credit_card { background: #fce7f3; color: #9d174d; }
+.badge.debit_card { background: #e0e9fb; color: var(--blue); }
+.badge.net_banking { background: #eaeef3; color: #3b475c; }
+.badge.wallet { background: #fef3c7; color: #92400e; }
+
+/* Route display in tables */
+.route-text { font-size: 13px; color: var(--muted); }
+.route-text .arrow { color: var(--blue); font-weight: 700; margin: 0 4px; }
+
 @media (max-width: 760px) {
   .train-card { grid-template-columns: 1fr; }
   .buy { text-align: left; }
   .hero h1 { font-size: 30px; }
   nav a { margin-left: 16px; }
+  .form-grid-2 { grid-template-columns: 1fr; }
+  .profile-info-grid { grid-template-columns: 1fr; }
 }
