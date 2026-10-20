@@ -1,0 +1,6 @@
+# Compiled Java classes and bin folder
+bin/
+*.class
+
+# Generated ticket files
+ticket_*.txt

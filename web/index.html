@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RailBook - Railway Reservation</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap bar">
+      <a href="#" class="logo" id="logo"><span class="logo-mark">R</span>RailBook</a>
+      <nav>
+        <a href="#" id="navSearch" class="active">Search trains</a>
+        <a href="#" id="navTickets">My tickets</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- PAGE 1: search and book -->
+  <section id="pageSearch">
+    <div class="hero">
+      <div class="wrap">
+        <h1>Where to next?</h1>
+        <p>Search trains, book a seat instantly, or join the waiting list when a train is full.</p>
+        <div class="search-card">
+          <label>From <input id="from" value="Jaipur"></label>
+          <label>To <input id="to" value="Delhi"></label>
+          <button id="searchBtn">Search</button>
+          <button id="allBtn" class="ghost">Show all</button>
+        </div>
+      </div>
+    </div>
+    <div class="wrap">
+      <h2 id="resultTitle" class="section-title">Trains</h2>
+      <div id="trainList"></div>
+    </div>
+  </section>
+
+  <!-- PAGE 2: booking confirmation -->
+  <section id="pageConfirm" hidden>
+    <div class="wrap narrow">
+      <div id="confirmHead" class="confirm-head"></div>
+      <div id="confirmTicket"></div>
+      <div class="actions">
+        <button id="saveBtn">Save ticket to file</button>
+        <button id="cancelThisBtn" class="danger">Cancel this ticket</button>
+        <button id="anotherBtn" class="ghost">Book another</button>
+        <button id="toTicketsBtn" class="ghost">All my tickets</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 3: my tickets -->
+  <section id="pageTickets" hidden>
+    <div class="wrap">
+      <h1 class="page-title">My tickets</h1>
+      <p class="sub">Look up a ticket, cancel it, and watch the waiting list move up.</p>
+
+      <div id="banner" class="banner" hidden></div>
+      <div id="stats" class="stats"></div>
+
+      <div class="card lookup">
+        <label>Look up a PNR <input id="pnr" placeholder="e.g. PNR1001"></label>
+        <button id="checkBtn">Check status</button>
+        <button id="cancelBtn" class="danger">Cancel ticket</button>
+      </div>
+
+      <div class="table-head">
+        <h2 class="section-title">All bookings</h2>
+        <div class="filters" id="filters">
+          <button class="chip active" data-f="ALL">All</button>
+          <button class="chip" data-f="CONFIRMED">Confirmed</button>
+          <button class="chip" data-f="WAITING">Waiting</button>
+          <button class="chip" data-f="CANCELLED">Cancelled</button>
+        </div>
+      </div>
+      <div class="card table-wrap">
+        <table>
+          <thead>
+            <tr><th>PNR</th><th>PASSENGER</th><th>TRAIN</th><th>SEAT</th><th>STATUS</th><th>FARE</th><th></th></tr>
+          </thead>
+          <tbody id="bookingBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking pop-up -->
+  <div id="modal" class="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h2 id="modalTitle">Book ticket</h2>
+      <p id="modalNote" class="sub"></p>
+      <div class="form-grid">
+        <label>Passenger name <input id="pname" autocomplete="off"></label>
+        <label>Age <input id="page" type="number" min="1" max="120"></label>
+        <label>Gender
+          <select id="pgender"><option>M</option><option>F</option><option>O</option></select>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button id="bookBtn">Confirm booking</button>
+        <button id="closeModal" class="ghost">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+  <footer>RailBook &middot; Java &middot; JDBC &middot; MySQL &middot; HTML/CSS/JavaScript</footer>
+  <script src="app.js"></script>
+</body>
+</html>
